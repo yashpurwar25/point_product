@@ -3,7 +3,7 @@ services:
     name: point-matrix
     runtime: static
     rootDir: dashboard
-    buildCommand: git lfs pull --include="dashboard/public/frames/**" && npm ci && npm run build
+    buildCommand: bash render-build.sh
     staticPublishPath: ./dist
     routes:
       - type: rewrite
