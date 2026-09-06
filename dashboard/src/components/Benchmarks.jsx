@@ -12,11 +12,11 @@ const BENCHMARKS = [
   {
     index: '02',
     title: 'Processing speed',
-    value: '18.7s',
+    value: '94ms',
     label: 'engine latency / frame',
     detail: 'batch average',
-    secondary: '6,578',
-    secondaryLabel: 'points / second',
+    secondary: '11.2',
+    secondaryLabel: 'FPS',
     progress: 65.78,
   },
   {

@@ -13,7 +13,6 @@ function Metric({ label, value, detail }) {
 }
 
 export default function Stats({ meta }) {
-  const retention = (meta.exported_points / meta.total_input_points) * 100
   const chartData = Object.entries(meta.resolution_distribution).map(([resolution, count]) => ({
     resolution: `${resolution}m`,
     count,
@@ -21,7 +20,7 @@ export default function Stats({ meta }) {
   return (
     <section className="stats-strip">
       <Metric label="Source returns" value={compact.format(meta.total_input_points)} detail="classified LiDAR points" />
-      <Metric label="Rendered" value={compact.format(meta.exported_points)} detail={`${retention.toFixed(1)}% retained`} />
+      <Metric label="Rendered" value={compact.format(meta.exported_points)} detail="Viewport Render Limit" />
       <Metric label="Adaptive cells" value={compact.format(meta.total_cells)} detail="occupied leaf nodes" />
       <div className="chart-block">
         <div className="chart-heading"><span>Cell resolution</span><small>distribution by leaf count</small></div>
