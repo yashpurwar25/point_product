@@ -26,7 +26,6 @@ This repository includes a Render Blueprint in `render.yaml`.
 2. Connect the GitHub repository `yashpurwar25/point_matrix`.
 3. Select the `main` branch and apply the Blueprint.
 
-Render builds from `dashboard` and publishes `dashboard/dist` as a static site.
+Render pulls the browser-ready frame assets from Git LFS, builds from `dashboard`, and publishes `dashboard/dist` as a static site. The raw NumPy source dataset is not downloaded during the build.
 
 The frame dataset is large. Git LFS must be available during the Render checkout and the deployed static-site size must fit the selected Render plan. If those limits are exceeded, move `dashboard/public/frames` to object storage and configure the dashboard to use that asset URL.
-

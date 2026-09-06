@@ -3,10 +3,9 @@ services:
     name: point-matrix
     runtime: static
     rootDir: dashboard
-    buildCommand: npm ci && npm run build
+    buildCommand: git lfs pull --include="dashboard/public/frames/**" && npm ci && npm run build
     staticPublishPath: ./dist
     routes:
       - type: rewrite
         source: /*
         destination: /index.html
-
