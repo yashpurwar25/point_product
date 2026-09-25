@@ -172,7 +172,7 @@ export default function App() {
           <div className="frame-readout"><span>ID</span><strong>{frameId}</strong><small><b>SEQ</b> {String(frameIndex + 1).padStart(2, '0')} / {String(dataset.frameIds.length).padStart(2, '0')}</small></div>
           <input className="timeline" type="range" min="0" max={dataset.frameIds.length - 1} value={frameIndex} onChange={(event) => { setFrameIndex(Number(event.target.value)); setPlaying(false) }} style={{ '--position': `${(frameIndex / (dataset.frameIds.length - 1)) * 100}%` }} />
           <div className="speed-control">
-            {[0.5, 1, 2].map((value) => <button key={value} className={speed === value ? 'active' : ''} onClick={() => setSpeed(value)}>{value}×</button>)}
+            {[0.5, 1, 2, 4, 6].map((value) => <button key={value} className={speed === value ? 'active' : ''} onClick={() => setSpeed(value)}>{value}×</button>)}
           </div>
         </div>
         <Stats meta={frame.meta} />
