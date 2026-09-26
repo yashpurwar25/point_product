@@ -17,13 +17,6 @@ Create a production build with `npm run build`.
 Local `/api` requests proxy to port 8000. For a deployed backend, set
 `VITE_API_URL` before building (see `.env.example`).
 
-## GitHub Pages
-
-The repository includes a GitHub Actions workflow that deploys the dashboard to
-GitHub Pages. That build sets `VITE_ENABLE_DEMO=false` and expects a repository
-variable named `VITE_API_URL` when you want uploads to talk to a public backend.
-The Python inference service itself cannot run on GitHub Pages.
-
 ## Rebuild frame assets
 
 From the repository root:

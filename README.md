@@ -27,15 +27,18 @@ npm ci
 npm run build
 ```
 
-## GitHub Pages deployment
+## Render deployment
 
-This repository now includes a GitHub Pages workflow in `.github/workflows/deploy-pages.yml`.
+This repository includes a Render Blueprint in `render.yaml`.
 
-1. Push `main` to the GitHub repository.
-2. In the repository settings, enable **Pages** with **GitHub Actions** as the source.
-3. Add the repository variable `VITE_API_URL` if you have a public backend URL.
+1. In Render, select **New > Blueprint**.
+2. Connect the GitHub repository `yashpurwar25/point_matrix`.
+3. Select the `main` branch and apply the Blueprint.
 
-The Pages build publishes only the static dashboard. It disables the saved demo
-for that deployment so the site stays small enough for Pages. Live uploads still
-require a separately hosted Python backend; set `VITE_API_URL` on the repository
-and `CORS_ORIGINS` on the backend to the final Pages origin.
+Render installs a pinned Git LFS binary when needed, pulls the browser-ready frame assets, builds from `dashboard`, and publishes `dashboard/dist` as a static site. The raw NumPy source dataset is not downloaded during the build.
+
+The frame dataset is large. Git LFS must be available during the Render checkout and the deployed static-site size must fit the selected Render plan. If those limits are exceeded, move `dashboard/public/frames` to object storage and configure the dashboard to use that asset URL.
+
+Live inference needs a separately deployed Python backend. Set `VITE_API_URL`
+on the static site's build and `CORS_ORIGINS` on the backend. The static Render
+site alone only supports the saved demo; see the backend deployment guide.

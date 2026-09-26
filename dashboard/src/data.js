@@ -3,8 +3,6 @@ const GRID_FIELDS = [
   'semantic_class', 'semantic_confidence', 'occupancy', 'traversability', 'point_count',
 ]
 
-const DEFAULT_FRAMES_BASE = `${import.meta.env.BASE_URL}frames`.replace(/\/{2,}/g, '/')
-
 function parseGridBinary(buffer, fields) {
   const floats = new Float32Array(buffer)
   if (floats.length % fields.length !== 0) throw new Error('Invalid grid buffer')
@@ -21,7 +19,7 @@ function parseGridBinary(buffer, fields) {
   return cells
 }
 
-export async function loadFrames(onProgress, baseUrl = DEFAULT_FRAMES_BASE) {
+export async function loadFrames(onProgress, baseUrl = '/frames') {
   const manifestResponse = await fetch(`${baseUrl}/manifest.json`)
   if (!manifestResponse.ok) throw new Error('Could not load frame manifest')
   const manifest = await manifestResponse.json()

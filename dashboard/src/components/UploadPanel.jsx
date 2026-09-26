@@ -38,7 +38,7 @@ async function apiText(path, options = {}) {
   return response.text()
 }
 
-export default function UploadPanel({ onResult, onDemo, onStart, demoLoading, hasDataset, demoEnabled }) {
+export default function UploadPanel({ onResult, onDemo, onStart, demoLoading, hasDataset }) {
   const [file, setFile] = useState(null)
   const [stage, setStage] = useState('')
   const [messages, setMessages] = useState([])
@@ -173,7 +173,7 @@ export default function UploadPanel({ onResult, onDemo, onStart, demoLoading, ha
         </div>
         <div className="upload-actions">
           <button className="primary-action" disabled={!file || busy || Boolean(jobId) || demoLoading} onClick={run}>{busy ? 'Processing scan...' : 'Run model + grid'}</button>
-          {demoEnabled && <button className="secondary-action" disabled={busy || Boolean(jobId) || demoLoading} onClick={() => { setResult(null); setStage(''); setMessages([]); setError(''); onDemo() }}>{demoLoading ? 'Loading demo...' : 'View saved demo'}</button>}
+          <button className="secondary-action" disabled={busy || Boolean(jobId) || demoLoading} onClick={() => { setResult(null); setStage(''); setMessages([]); setError(''); onDemo() }}>{demoLoading ? 'Loading demo...' : 'View saved demo'}</button>
         </div>
       </div>
       {(stage || messages.length > 0) && (
