@@ -3,4 +3,7 @@ __pycache__/
 *.py[cod]
 dashboard/node_modules/
 dashboard/dist/
-
+.runtime/
+.venv/
+.pytest_cache/
+dashboard/.env.local

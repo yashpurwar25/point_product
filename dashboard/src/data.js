@@ -19,8 +19,8 @@ function parseGridBinary(buffer, fields) {
   return cells
 }
 
-export async function loadFrames(onProgress) {
-  const manifestResponse = await fetch('/frames/manifest.json')
+export async function loadFrames(onProgress, baseUrl = '/frames') {
+  const manifestResponse = await fetch(`${baseUrl}/manifest.json`)
   if (!manifestResponse.ok) throw new Error('Could not load frame manifest')
   const manifest = await manifestResponse.json()
   const { frames } = manifest
@@ -36,10 +36,10 @@ export async function loadFrames(onProgress) {
     if (pending.has(frameId)) return pending.get(frameId)
     const request = (async () => {
       const gridUrl = gridFormat === 'binary'
-        ? `/frames/grid/${frameId}_grid.bin`
-        : `/frames/grid/${frameId}_grid.json`
+        ? `${baseUrl}/grid/${frameId}_grid.bin`
+        : `${baseUrl}/grid/${frameId}_grid.json`
       const [gridResponse, pointsResponse, metaResponse] = await Promise.all([
-        fetch(gridUrl), fetch(`/frames/points/${frameId}_points.bin`), fetch(`/frames/meta/${frameId}_meta.json`),
+        fetch(gridUrl), fetch(`${baseUrl}/points/${frameId}_points.bin`), fetch(`${baseUrl}/meta/${frameId}_meta.json`),
       ])
       if (![gridResponse, pointsResponse, metaResponse].every((response) => response.ok)) throw new Error(`Incomplete data for frame ${frameId}`)
       const [gridPayload, pointBuffer, meta] = await Promise.all([

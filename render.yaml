@@ -5,6 +5,9 @@ services:
     rootDir: dashboard
     buildCommand: bash render-build.sh
     staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
     routes:
       - type: rewrite
         source: /*

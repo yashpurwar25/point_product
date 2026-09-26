@@ -1,0 +1,8 @@
+.git
+.runtime
+.venv
+batch_grid_outputs
+dashboard
+**/__pycache__
+*.rtf
+*.docx

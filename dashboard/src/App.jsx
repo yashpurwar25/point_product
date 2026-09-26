@@ -3,24 +3,9 @@ import Benchmarks from './components/Benchmarks'
 import GridView from './components/GridView'
 import PointCloud from './components/PointCloud'
 import Stats from './components/Stats'
+import UploadPanel from './components/UploadPanel'
 import { loadFrames } from './data'
 import { colorForClass, nameForClass } from './palette'
-
-function LoadingScreen({ progress, error }) {
-  return (
-    <main className="loading-screen">
-      <div className="radar"><i /><i /><i /></div>
-      <p className="eyebrow">GRID ENGINE // DATA LINK</p>
-      <h1>{error ? 'Telemetry unavailable' : 'Building spatial model'}</h1>
-      {error ? <p className="load-error">{error}</p> : (
-        <>
-          <div className="load-track"><span style={{ width: `${progress}%` }} /></div>
-          <p>{progress}% · Initializing frame stream</p>
-        </>
-      )}
-    </main>
-  )
-}
 
 function Panel({ index, title, subtitle, tag, children }) {
   return (
@@ -62,13 +47,25 @@ export default function App() {
   const [, setCacheRevision] = useState(0)
   const lastAdvance = useRef(0)
 
-  useEffect(() => {
-    let active = true
-    loadFrames((done, total) => active && setProgress(Math.round((done / total) * 100)))
-      .then((result) => active && setDataset(result))
-      .catch((loadError) => active && setError(loadError.message))
-    return () => { active = false }
-  }, [])
+  const useDataset = (result) => {
+    setPlaying(false)
+    setFrameIndex(0)
+    setHiddenClasses(new Set())
+    setFocus({ x: 0, y: 0 })
+    setError('')
+    setDataset(result)
+  }
+
+  const [demoLoading, setDemoLoading] = useState(false)
+  const openDemo = async () => {
+    setDemoLoading(true)
+    setError('')
+    setPlaying(false)
+    loadFrames((done, total) => setProgress(Math.round((done / total) * 100)))
+      .then((result) => useDataset({ ...result, source: 'demo' }))
+      .catch((loadError) => setError(loadError.message))
+      .finally(() => setDemoLoading(false))
+  }
 
   useEffect(() => {
     if (!playing || !dataset) return undefined
@@ -114,12 +111,10 @@ export default function App() {
     return [...ids].sort((a, b) => a - b)
   }, [dataset])
 
-  if (!dataset || error) return <LoadingScreen progress={progress} error={error} />
-
-  const frameId = dataset.frameIds[frameIndex]
-  const requestedFrame = dataset.frames.get(frameId)
-  const frame = requestedFrame ?? dataset.frames.values().next().value
-  const buffering = !requestedFrame
+  const frameId = dataset?.frameIds[frameIndex]
+  const requestedFrame = dataset?.frames.get(frameId)
+  const frame = requestedFrame ?? dataset?.frames.values().next().value
+  const buffering = Boolean(dataset && !requestedFrame)
   const stepFrame = (amount) => {
     setPlaying(false)
     setFrameIndex((current) => (current + amount + dataset.frameIds.length) % dataset.frameIds.length)
@@ -147,25 +142,29 @@ export default function App() {
           <p className="eyebrow">AUTONOMY PERCEPTION SYSTEM · RUN 01</p>
           <h1>Semantic Projection <em>Lab</em></h1>
         </div>
-        <div className="system-status"><i /> DATASET ONLINE <strong>{dataset.frameIds.length} FRAMES</strong></div>
+        <div className="system-status"><i /> {dataset ? (dataset.source === 'upload' ? 'LIVE RESULT' : 'SAVED DEMO') : 'AWAITING SCAN'}<strong>{dataset?.frameIds.length ?? 0} FRAMES</strong></div>
       </header>
 
+      <UploadPanel onResult={useDataset} onDemo={openDemo} onStart={() => { setPlaying(false); setDataset(null); setError('') }} demoLoading={demoLoading} hasDataset={Boolean(dataset)} />
+      {error && <p className="upload-error" role="alert">{error}</p>}
+      {demoLoading && <p className="demo-loading" role="status">Loading saved demo... {progress}%</p>}
+      {frame && <>
       <section className="view-grid">
         {buffering && <div className="buffer-indicator"><i /> BUFFERING ID {frameId}</div>}
         <Panel index={1} title="Classified point field" subtitle="Raw spatial returns · XYZ + semantic class" tag="3D / ORBIT">
-          <PointCloud points={frame.points} hiddenClasses={hiddenClasses} linked={linked} focus={focus} onFocusChange={updateFocus} />
+          <PointCloud key={dataset.source + dataset.filename} points={frame.points} hiddenClasses={hiddenClasses} linked={linked} focus={focus} onFocusChange={updateFocus} />
         </Panel>
         <button className={`sync-button ${linked ? 'active' : ''}`} onClick={() => setLinked((value) => !value)} aria-pressed={linked} aria-label="Link viewport navigation">
           <svg viewBox="0 0 24 24"><path d="M8.5 14.5 6 17a3.54 3.54 0 0 1-5-5l4-4a3.54 3.54 0 0 1 5 0l.5.5-1.4 1.4-.5-.5a1.54 1.54 0 0 0-2.2 0l-4 4a1.54 1.54 0 0 0 2.2 2.2l2.5-2.5zm7-5 2.5-2.5a1.54 1.54 0 0 1 2.2 2.2l-4 4a1.54 1.54 0 0 1-2.2 0l-.5-.5-1.4 1.4.5.5a3.54 3.54 0 0 0 5 0l4-4a3.54 3.54 0 0 0-5-5L14.1 8.1zM7.8 14.8l7-7 1.4 1.4-7 7z" /></svg>
           <span>{linked ? 'LINKED' : 'FREE'}</span>
         </button>
         <Panel index={2} title="Adaptive grid projection" subtitle="Variable-resolution 2.5D leaf cells" tag="TOP / METRIC">
-          <GridView cells={frame.grid} hiddenClasses={hiddenClasses} linked={linked} focus={focus} onFocusChange={updateFocus} />
+          <GridView key={dataset.source + dataset.filename} cells={frame.grid} hiddenClasses={hiddenClasses} linked={linked} focus={focus} onFocusChange={updateFocus} />
         </Panel>
       </section>
 
       <section className="control-deck">
-        <div className="timeline-row">
+        {dataset.frameIds.length > 1 ? <div className="timeline-row">
           <button className="step-button" onClick={() => stepFrame(-1)} aria-label="Previous frame"><StepIcon direction="previous" /></button>
           <button className="play-button" onClick={() => setPlaying((value) => !value)} aria-label={playing ? 'Pause' : 'Play'}><PlayIcon playing={playing} /></button>
           <button className="step-button" onClick={() => stepFrame(1)} aria-label="Next frame"><StepIcon direction="next" /></button>
@@ -174,11 +173,11 @@ export default function App() {
           <div className="speed-control">
             {[0.5, 1, 2, 4, 6].map((value) => <button key={value} className={speed === value ? 'active' : ''} onClick={() => setSpeed(value)}>{value}×</button>)}
           </div>
-        </div>
+        </div> : <div className="live-frame-label">LIVE RESULT <strong>{dataset.filename}</strong><span>Generated from your uploaded scan</span></div>}
         <Stats meta={frame.meta} />
       </section>
 
-      <Benchmarks />
+      {dataset.source === 'demo' && <Benchmarks />}
 
       <footer className="legend-bar">
         <div className="legend-title"><span>SEMANTIC FILTER</span><small>{semanticClasses.length - hiddenClasses.size} of {semanticClasses.length} visible</small><button onClick={() => setHiddenClasses(new Set())}>SHOW ALL</button></div>
@@ -186,6 +185,7 @@ export default function App() {
           {semanticClasses.map((id) => <button className={`legend-item ${hiddenClasses.has(id) ? 'hidden-class' : ''}`} key={id} onClick={() => toggleClass(id)} aria-pressed={!hiddenClasses.has(id)}><i style={{ background: colorForClass(id), boxShadow: `0 0 9px ${colorForClass(id)}66` }} /><span>{nameForClass(id)}</span><small>{String(id).padStart(2, '0')}</small></button>)}
         </div>
       </footer>
+      </>}
     </main>
   )
 }

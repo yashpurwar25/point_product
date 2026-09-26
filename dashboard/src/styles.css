@@ -22,6 +22,60 @@ body {
     linear-gradient(135deg, #07100f 0%, #050a09 55%, #09120f 100%);
 }
 button, input { font: inherit; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+button:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px solid var(--mint); outline-offset: 4px; }
+
+.upload-panel { position: relative; margin-top: 20px; padding: 24px; border: 1px solid #2a4d42; background: linear-gradient(125deg, #10241dee, #091410ed 65%); }
+.upload-heading, .output-heading { display: flex; justify-content: space-between; gap: 20px; align-items: center; }
+.upload-heading h2 { margin: 8px 0 20px; font-size: clamp(20px, 2.4vw, 30px); font-weight: 400; letter-spacing: -.04em; }
+.api-status { color: #9eab9e; font: 9px "Courier New", monospace; white-space: nowrap; }
+.api-status.online { color: var(--mint); }
+.upload-content { display: flex; gap: 16px; }
+.drop-zone { flex: 1; min-width: 0; border: 1px dashed #436858; padding: 24px 18px; display: flex; gap: 16px; align-items: center; transition: background .2s, border-color .2s; }
+.drop-zone.dragging { background: #204336; border-color: var(--mint); }
+.upload-symbol { color: var(--mint); font-size: 32px; }
+.drop-zone strong { font-weight: 500; overflow-wrap: anywhere; }
+.drop-zone p { color: #a0b2a8; margin: 7px 0; font-size: 12px; }
+.drop-zone small, .output-panel > small { color: #7f998b; font-size: 11px; }
+.drop-zone button { margin-left: auto; white-space: nowrap; }
+.upload-actions { display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+.primary-action, .secondary-action { padding: 12px 18px; border: 1px solid #426455; background: #10221b; color: #bad2c5; font-size: 12px; cursor: pointer; }
+.primary-action { background: var(--mint); color: #071c14; border-color: var(--mint); font-weight: 600; }
+.secondary-action:hover:not(:disabled) { border-color: var(--mint); color: var(--mint); }
+.pipeline-stages { display: grid; grid-template-columns: repeat(6, 1fr); list-style: none; padding: 0; margin: 22px 0 16px; gap: 10px; }
+.pipeline-stages li { border-top: 2px solid #294337; padding-top: 10px; font-size: 11px; color: #769081; }
+.pipeline-stages li span { margin-right: 7px; font-family: "Courier New", monospace; opacity: .6; }
+.pipeline-stages li.done, .pipeline-stages li.current { color: var(--mint); border-color: var(--mint); }
+.pipeline-stages li.current { animation: pulse 1.5s infinite; }
+.pipeline-log { padding: 12px 15px; background: #060f0b; font: 11px/1.8 "Courier New", monospace; overflow-wrap: anywhere; }
+.pipeline-log p { margin: 3px 0; color: #a1baad; }
+.pipeline-log span { color: #56846c; display: inline-block; min-width: 120px; }
+.upload-error { padding: 12px 16px; margin-top: 14px; border: 1px solid #8b523b; background: #361d15; color: #f5c3a8; font-size: 13px; }
+.upload-error p { margin: 0 0 8px; }
+.demo-loading { color: var(--mint); font-size: 12px; }
+.output-panel { border-top: 1px solid #31513f; margin-top: 20px; padding-top: 20px; }
+.output-heading h3 { margin: 6px 0; font-size: 18px; font-weight: 500; }
+.output-heading p { font: 11px "Courier New", monospace; color: #8cb19c; }
+.output-heading p span { margin: 0 8px; opacity: .4; }
+.output-downloads { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+.output-downloads a { color: var(--mint); text-decoration: none; padding: 9px 12px; border: 1px solid #375943; font-size: 11px; }
+.output-panel details { margin-top: 15px; color: #a1b9ab; font-size: 12px; }
+.output-panel summary { cursor: pointer; }
+.output-panel pre { overflow: auto; max-height: 340px; padding: 16px; background: #060f0b; font-size: 11px; }
+.live-frame-label { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 18px; font: 10px "Courier New", monospace; color: var(--mint); border-bottom: 1px solid var(--line); }
+.live-frame-label strong { color: #cbddd2; overflow-wrap: anywhere; }
+.live-frame-label span { margin-left: auto; color: #7b9987; }
+
+@media (max-width: 800px) {
+  .upload-panel { padding: 18px; }
+  .upload-heading, .output-heading { align-items: flex-start; flex-direction: column; gap: 0; }
+  .api-status { margin-bottom: 18px; }
+  .upload-content { flex-direction: column; }
+  .upload-actions { flex-direction: row; }
+  .drop-zone { flex-wrap: wrap; padding: 16px; }
+  .drop-zone button { margin-left: 0; }
+  .pipeline-stages { grid-template-columns: repeat(3, 1fr); row-gap: 16px; }
+}
 
 .app-shell { min-height: 100vh; padding: 22px 26px 18px; position: relative; overflow: hidden; }
 .app-shell::before {

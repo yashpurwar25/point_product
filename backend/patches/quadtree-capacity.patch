@@ -1,0 +1,13 @@
+diff --git a/grid_engine/quadtree.py b/grid_engine/quadtree.py
+--- a/grid_engine/quadtree.py
++++ b/grid_engine/quadtree.py
+@@ -37,7 +37,8 @@ def build_quadtree(cell_data, cell_columns, grid_bounds):
+         leaf_level[mask] = lvl
+ 
+     # Pre-allocate
+-    max_nodes = n_cells * 2
++    # Sparse leaves can each need a separate ancestor at every level.
++    max_nodes = n_cells * (MAX_DEPTH + 1)
+     nodes = np.zeros(max_nodes, dtype=NODE_DTYPE)
+ 
+     # Bulk-insert leaf cells

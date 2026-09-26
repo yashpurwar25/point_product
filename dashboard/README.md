@@ -1,6 +1,7 @@
 # Grid Engine Dashboard
 
-Static React visualization of classified LiDAR points and their synchronized variable-resolution 2.5D grid projection.
+React visualization with raw LiDAR upload, live DL/grid processing and an optional
+saved demo. See [backend setup](../backend/README.md) for the inference service.
 
 ## Run
 
@@ -12,6 +13,9 @@ npm run dev
 ```
 
 Create a production build with `npm run build`.
+
+Local `/api` requests proxy to port 8000. For a deployed backend, set
+`VITE_API_URL` before building (see `.env.example`).
 
 ## Rebuild frame assets
 

@@ -80,7 +80,8 @@ def convert_frame(
     input_count = int(points.shape[0])
     export_count = min(input_count, max_points)
     if input_count > export_count:
-        rng = np.random.default_rng(seed + int(frame_id))
+        frame_seed = int.from_bytes(frame_id.encode("utf-8"), "little") if not frame_id.isdigit() else int(frame_id)
+        rng = np.random.default_rng(seed + frame_seed)
         indices = rng.choice(input_count, export_count, replace=False)
         exported = points[indices, :4]
     else:
