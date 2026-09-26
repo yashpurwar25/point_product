@@ -7,6 +7,8 @@ import UploadPanel from './components/UploadPanel'
 import { loadFrames } from './data'
 import { colorForClass, nameForClass } from './palette'
 
+const DEMO_ENABLED = import.meta.env.VITE_ENABLE_DEMO !== 'false'
+
 function Panel({ index, title, subtitle, tag, children }) {
   return (
     <section className="view-panel">
@@ -58,6 +60,7 @@ export default function App() {
 
   const [demoLoading, setDemoLoading] = useState(false)
   const openDemo = async () => {
+    if (!DEMO_ENABLED) return
     setDemoLoading(true)
     setError('')
     setPlaying(false)
@@ -145,9 +148,9 @@ export default function App() {
         <div className="system-status"><i /> {dataset ? (dataset.source === 'upload' ? 'LIVE RESULT' : 'SAVED DEMO') : 'AWAITING SCAN'}<strong>{dataset?.frameIds.length ?? 0} FRAMES</strong></div>
       </header>
 
-      <UploadPanel onResult={useDataset} onDemo={openDemo} onStart={() => { setPlaying(false); setDataset(null); setError('') }} demoLoading={demoLoading} hasDataset={Boolean(dataset)} />
+      <UploadPanel onResult={useDataset} onDemo={openDemo} onStart={() => { setPlaying(false); setDataset(null); setError('') }} demoLoading={demoLoading} hasDataset={Boolean(dataset)} demoEnabled={DEMO_ENABLED} />
       {error && <p className="upload-error" role="alert">{error}</p>}
-      {demoLoading && <p className="demo-loading" role="status">Loading saved demo... {progress}%</p>}
+      {demoLoading && DEMO_ENABLED && <p className="demo-loading" role="status">Loading saved demo... {progress}%</p>}
       {frame && <>
       <section className="view-grid">
         {buffering && <div className="buffer-indicator"><i /> BUFFERING ID {frameId}</div>}
